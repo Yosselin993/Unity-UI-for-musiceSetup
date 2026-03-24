@@ -1,32 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-
+//used new SongData instead, If you want to use the old one, just change the type in the list and the methods
+//Was getting errors related to not actually storing the songs, but storing the downloaded paths
 public class SongManager : MonoBehaviour
 {
     public static SongManager Instance;
 
-    // public TMP_Text storedSongsText;
-
-    public Transform storedSongsContainer;
-    public GameObject storedSongPrefab;
-
-
-
-    private SongSuggestion selectedSong;
-
+    public List<SongData> selectedSongs = new List<SongData>();
     public List<string> downloadedSongPaths = new List<string>();
-    private List<SongSuggestion> storedSongs = new List<SongSuggestion>();
-
-    public int maxsonglist = 8;
-
-    public List<SongSuggestion> GetStoredSongs()
-    {
-        return storedSongs;
-    }
-
-
-
 
     private void Awake()
     {
@@ -41,110 +22,23 @@ public class SongManager : MonoBehaviour
         }
     }
 
-    //this will be called once the player clicks on a suggested song.
-    public void SetSelectedSong(SongSuggestion song)
+    public void AddSong(SongData song)
     {
-        selectedSong = song;
+        selectedSongs.Add(song);
     }
 
-    // public void AddSelectedSong()
-    // {
-    //     if (selectedSong == null)
-    //     {
-    //         Debug.Log("no song was selected");
-    //         return;
-    //     }
-
-    //     storedSongs.Add(selectedSong);
-
-    //     storedSongsText.text = "";
-    //     foreach (var song in storedSongs)
-    //     {
-    //         storedSongsText.text += song.title + " - " + song.artist  + "\n";
-    //     }
-
-    //     selectedSong = null;
-    // }
-
-    public void AddSelectedSong()
+    public List<SongData> GetStoredSongs()
     {
-        if (storedSongs.Count >= maxsonglist)
-        {
-            Debug.Log("Can only select up to 8 songs");
-            return;
-        }
-
-        storedSongs.Add(selectedSong);
-        RefreshStoredSongsUI();
-        selectedSong = null;
+        return selectedSongs;
     }
 
-    // void RefreshStoredSongsUI()
-    // {
-    //     foreach (Transform child in storedSongsContainer)
-    //     {
-    //         Destroy(child.gameObject);
-    //     }
-
-    //     foreach (var song in storedSongs)
-    //     {
-    //         GameObject obj = Instantiate(storedSongPrefab, storedSongsContainer);
-    //         TMP_Text textComponent = obj.GetComponentInChildren<TMP_Text>();
-
-    //         if (textComponent != null)
-    //         {
-    //             textComponent.text = song.title + " - " + song.artist;
-    //         }
-    //     }
-    // }
-
-
-
-    void RefreshStoredSongsUI()
+    public void SetSongOrder(List<SongData> newOrder)
     {
-        foreach (Transform child in storedSongsContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
-      foreach (var song in storedSongs)
-      {
-            GameObject obj = Instantiate(storedSongPrefab, storedSongsContainer);
-
-            TMP_Text textComponent = obj.GetComponentInChildren<TMP_Text>();
-            if (textComponent != null)
-            {
-                textComponent.text = song.title + " - " + song.artist;
-            }
-
-            StoredSongPrefabScript row = obj.GetComponent<StoredSongPrefabScript>();
-            if (row != null)
-            {
-                row.Setup(song);
-            }
-      }
-
+        selectedSongs = newOrder;
     }
 
-   public void DeleteSong(SongSuggestion song)
+    public void DeleteSong(SongData song)
     {
-        storedSongs.Remove(song);
-        RefreshStoredSongsUI();
+        selectedSongs.Remove(song);
     }
-
-
-    // [System.Serializable]
-    // public class SongSuggestion
-    // {
-    //     public string title;
-    //     public string artist;
-    //     public string video_id;
-    // }
-
-
-
-
-
-
-
 }

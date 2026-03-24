@@ -80,13 +80,15 @@ public class AutocompleteController : MonoBehaviour
             GameObject obj = Instantiate(suggestionPrefab, suggestionContainer);
             obj.GetComponentInChildren<TMP_Text>().text = $"{s.title} - {s.artist}";
 
-            obj.GetComponent<Button>().onClick.AddListener(() =>
-            {
-                searchInput.text = s.title + " - " + s.artist;
-
-                SongManager.Instance.SetSelectedSong(s);
-
-                ClearSuggestions();
+            obj.GetComponent<Button>().onClick.AddListener(() => //can replace SuggestionItem.cs with this
+                {
+                    searchInput.text = $"{s.title} - {s.artist}";
+                    // Add to playlist with SongData before downloading the song
+                    DownloadHandler.Instance.StartDownload(s.video_id, s.title, s.artist);
+                    // Refresh the playlist UI so the new song appears
+                    PlaylistUI.Instance.RefreshUI();
+                    ClearSuggestions();
+                    suggestionContainer.gameObject.SetActive(false);
             });
         }
     }

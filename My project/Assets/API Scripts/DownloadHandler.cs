@@ -11,14 +11,17 @@ public class DownloadHandler : MonoBehaviour
         Instance = this;
     }
 
-    public void StartDownload(string videoId, string title)
+    public void StartDownload(string videoId, string title, string artist)
     {
-        StartCoroutine(DownloadSong(videoId, title));
+        // adds to playlist before downloading
+        SongManager.Instance.AddSong(new SongData(title, artist, videoId));
+        StartCoroutine(DownloadSong(videoId, title, artist));
     }
 
-    private IEnumerator DownloadSong(string videoId, string title)
+    private IEnumerator DownloadSong(string videoId, string title, string artist)
     {
-        string url = $"http://127.0.0.1:8000/download_song?video_id={videoId}&title={UnityWebRequest.EscapeURL(title)}";
+        string url =
+            $"http://127.0.0.1:8000/download_song?video_id={UnityWebRequest.EscapeURL(videoId)}&title={UnityWebRequest.EscapeURL(title)}&artist={UnityWebRequest.EscapeURL(artist)}";
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
