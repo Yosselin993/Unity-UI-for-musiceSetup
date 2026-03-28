@@ -142,7 +142,17 @@ public class SongManager : MonoBehaviour
     // }
 
 
+    public void AddDownloadedSongPath(string path)
+    {
+    //     if (!downloadedSongPaths.Contains(path))
+    // {
+    //     downloadedSongPaths.Add(path);
+       if (!string.IsNullOrEmpty(path) && !downloadedSongPaths.Contains(path))
+        {
+            downloadedSongPaths.Add(path);
+        }
 
+    }
 
 
 

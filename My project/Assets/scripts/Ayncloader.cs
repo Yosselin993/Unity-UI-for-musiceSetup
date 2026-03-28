@@ -57,6 +57,7 @@ public class Ayncloader : MonoBehaviour
             yield break;
         }
 
+        SongManager.Instance.downloadedSongPaths.Clear();
         var songs = SongManager.Instance.GetStoredSongs();
 
         if (songs == null || songs.Count == 0)
@@ -93,6 +94,17 @@ public class Ayncloader : MonoBehaviour
                 else
                 {
                     Debug.Log("Download complete: " + request.downloadHandler.text);
+                    DownloadSongResponse response = JsonUtility.FromJson<DownloadSongResponse>(request.downloadHandler.text);
+                    if (response != null && !string.IsNullOrEmpty(response.path))
+                    {
+                        SongManager.Instance.AddDownloadedSongPath(response.path);
+                        Debug.Log("Stored downloaded path: " + response.path);
+                        Debug.Log("Total downloaded songs in SongManager: " + SongManager.Instance.downloadedSongPaths.Count);
+                    }
+                    else
+                    {
+                        Debug.LogError("Download succeeded but no path was returned.");
+                    }
                 }
             }
 
