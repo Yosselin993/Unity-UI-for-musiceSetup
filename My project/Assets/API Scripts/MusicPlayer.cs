@@ -3,18 +3,28 @@ using UnityEngine.Networking;
 using System.Collections;
 using System.IO;
 
+
 [RequireComponent(typeof(AudioSource))]
 public class MusicPlayer : MonoBehaviour
 {
     private AudioSource audioSource;
+    private int currentIndex = 0;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-
-        string firstSongPath = SongManager.Instance.downloadedSongPaths[0];
-        StartCoroutine(LoadAndPlay(firstSongPath));
+        PlayCurrentSong();
     }
+
+    void PlayCurrentSong()
+    {
+        if (SongManager.Instance.downloadedSongPaths.Count == 0)
+            return;
+        
+        string path = SongManager.Instance.downloadedSongPaths[currentIndex];
+        StartCoroutine(LoadAndPlay(path));
+    }
+
 
     IEnumerator LoadAndPlay(string path)
     {
@@ -49,11 +59,31 @@ public class MusicPlayer : MonoBehaviour
 
                 audioSource.clip = clip;
                 audioSource.Play();
+                StartCoroutine(WaitForSongToEnd());
             }
             else
             {
                 Debug.LogError("There is something wrong with www: " + www.error);
             }
         }
+    }
+
+    IEnumerator WaitForSongToEnd()
+    {
+        while (audioSource.isPlaying)
+            yield return null;
+
+        PlayNextSong();
+    }
+
+    void PlayNextSong()
+    {
+        currentIndex++;
+        if (currentIndex >= SongManager.Instance.downloadedSongPaths.Count)
+        {
+            Debug.Log("End of playlist.");
+            return;
+        }
+        PlayCurrentSong();
     }
 }

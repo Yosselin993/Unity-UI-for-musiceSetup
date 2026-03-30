@@ -13,6 +13,14 @@ public class DownloadHandler : MonoBehaviour
 
     public void StartDownload(string videoId, string title)
     {
+        // Check if already downloaded
+        if (SongManager.Instance.downloadedById.ContainsKey(videoId))
+        {
+            Debug.Log("Song already downloaded, reusing file.");
+            SongManager.Instance.AddDownloadedSongPath(SongManager.Instance.downloadedById[videoId]);
+            return;
+        }
+
         StartCoroutine(DownloadSong(videoId, title));
     }
 
@@ -35,6 +43,8 @@ public class DownloadHandler : MonoBehaviour
             if (response.status == "success")
             {
                 Debug.Log("Downloaded: " + response.path);
+                // Save path by video_id
+                SongManager.Instance.downloadedById[videoId] = response.path;
                 SongManager.Instance.downloadedSongPaths.Add(response.path);
             }
             else
